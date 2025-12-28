@@ -1,0 +1,101 @@
+[project]
+name = "ai-engineer-code-challenge"
+version = "0.1.0"
+description = "A code challenge project for AI Engineer."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "asgi-correlation-id>=4.3.4",
+    "chromadb>=1.3.5",
+    "fastapi>=0.121.2",
+    "gunicorn>=23.0.0",
+    "httpx>=0.28.1",
+    "huggingface-hub>=0.36.0",
+    "langchain>=1.1.3",
+    "langchain-chroma>=1.0.0",
+    "langchain-classic>=1.0.0",
+    "langchain-community>=0.4.1",
+    "langchain-core>=1.1.2",
+    "langchain-openai>=1.1.1",
+    "langgraph>=1.0.4",
+    "load-dotenv>=0.1.0",
+    "pydantic-settings>=2.12.0",
+    "pypdf>=6.4.1",
+    "python-multipart>=0.0.18",
+    "ragas>=0.4.1",
+    "requests>=2.32.5",
+    "streamlit>=1.51.0",
+    "uvicorn>=0.38.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.11.0",
+    "just>=0.8.165",
+    "pylint>=4.0.3",
+    "pytest>=9.0.1",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.14.0",
+]
+
+[tool.pylint.main]
+jobs = 0  # Auto-detect CPU cores
+ignore-paths = [".venv"]
+ignore-patterns = ["test_.*\\.py", "conftest\\.py"]
+ignored-modules = ["config"]
+
+[tool.pylint.messages_control]
+disable = [
+    # Missing docstrings
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+    
+    # Style preferences
+    "R0903",  # too-few-public-methods
+    "W0102",  # dangerous-default-value
+    "W1203",  # logging-fstring-interpolation
+    "W0511",  # fixme (TODO comments)
+    "W0621",  # redefined-outer-name
+    
+    # Common additions
+    "R0801",  # duplicate-code
+    "R0913",  # too-many-arguments
+    "R0914",  # too-many-locals
+    "C0301",  # line-too-long (if using formatter like black)
+    "C0103",  # invalid-name (if you have naming conventions)
+]
+
+[tool.pylint.format]
+max-line-length = 88  # Match black/ruff
+
+[tool.pylint.design]
+max-args = 7
+max-locals = 20
+max-returns = 6
+max-branches = 15
+
+[tool.pylint.similarities]
+min-similarity-lines = 6
+ignore-imports = true
+
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+    | \.venv
+)/
+'''
+
+[tool.coverage.run]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/.venv/*",
+    "*/venv/*",
+]

@@ -1,0 +1,5 @@
+{
+  "name": "DocuMind QA AI",
+  "description": "A high-performance Document QA application built with React and Gemini 3, featuring a visual LangGraph-inspired workflow for document analysis and indexing.",
+  "requestFramePermissions": []
+}
