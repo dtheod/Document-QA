@@ -103,7 +103,8 @@ The project includes a built-in evaluation tab to run **RAGAS** metrics.
 
 ## Demo
 
-![Demo Video Placeholder](backend/outputs/demo_video.mp4)
-*(Video to be added)*
+<video src="backend/outputs/screen_docuAIapp.mov" controls="controls" style="max-width: 100%;">
+  Your browser does not support the video tag.
+</video>
 
 ---
