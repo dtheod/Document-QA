@@ -1,8 +1,3 @@
-# Document QA Chatbot
-
-Welcome! This repository contains the AI Engineer code challenge project, a RAG-based Document QA system.
-
----
 
 ## Overview
 
