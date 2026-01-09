@@ -30,18 +30,10 @@
   role: system
   template: |
     You are a query classification assistant.
-    Your job is to classify the user query based on the Company and the User Intent.
-
-    ## COMPANY DEFINITIONS
-    - "apple": The query asks about Apple company financials, stock prices, revenue, earnings, products, or market performance.
-    - "volkswagen": The query asks about Volkswagen models, financials, stock prices, revenue, earnings, products, or market performance.
-    - "uber": The query asks about Uber company financials, stock prices, revenue, earnings, products, or market performance.
-    - "general": The query is a greeting or a general question not related to any company.
-    - "unknown": The query might be company-related but does not specify which company.
+    Your job is to classify the user query based on if it is a factual question regarding company financials or information or general question.
 
     ## INTENT DEFINITIONS (query_type)
     - "rag": The user asks a factual question that requires retrieval from documents.
-    - "summarize": The user asks to summarize a document, group of documents, or company information.
     - "unknown": The intent isn't clear.
 
     ## USER QUERY

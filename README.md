@@ -17,12 +17,59 @@ This project provides a robust Document Chatbot utilizing a **FastAPI** backend 
 
 The system uses a sophisticated agent workflow:
 
-![Agent Workflow](backend/outputs/workflow_graph.png)
+![Agent Workflow](backend/data/outputs/workflow_graph.png)
 
 1.  **Router**: Classifies query (General vs. RAG vs. Summarization).
 2.  **Retriever**: Fetches relevant chunks from ChromaDB.
 3.  **Generator**: Synthesizes answer using context.
 4.  **Judge**: Verifies the answer against the retrieved context before returning to the user.
+
+---
+
+## Project Structure
+
+```
+Document-QA/
+├── backend/                    # FastAPI Backend
+│   ├── app/                    # Main application package
+│   │   ├── api/                # API layer
+│   │   │   └── routers/        # API route handlers
+│   │   │       ├── chat.py     # Chat endpoints
+│   │   │       ├── documents.py # Document upload
+│   │   │       └── evaluation.py # RAGAS evaluation
+│   │   ├── core/               # Core configuration
+│   │   │   └── config.py       # Environment variables
+│   │   ├── models/             # Data models
+│   │   │   └── schemas.py      # Pydantic schemas
+│   │   ├── services/           # Business logic
+│   │   │   ├── workflow/       # LangGraph agents
+│   │   │   │   ├── agents.py   # Agent implementations
+│   │   │   │   ├── graph.py    # Workflow graph
+│   │   │   │   └── chat.py     # Chat service
+│   │   │   ├── rag/            # RAG functionality
+│   │   │   │   ├── indexing.py # Document indexing
+│   │   │   │   └── documents.py # Document service
+│   │   │   └── evaluation/     # Evaluation
+│   │   │       └── ragas.py    # RAGAS metrics
+│   │   ├── main.py             # FastAPI app entry
+│   │   └── utils.py            # Shared utilities
+│   ├── data/                   # Data storage
+│   │   ├── chroma_db/          # Vector database
+│   │   ├── doc_store/          # Document store
+│   │   └── outputs/            # Generated files
+│   ├── prompts/                # YAML prompt templates
+│   │   ├── rag_core.yml        # Core RAG prompts
+│   │   └── rag_eval.yml        # Evaluation prompts
+│   ├── tests/                  # Test files
+│   └── pyproject.toml          # Python dependencies
+├── frontend/                   # React + Vite Frontend
+│   ├── components/             # React components
+│   ├── services/               # API client
+│   ├── App.tsx                 # Main app component
+│   └── package.json            # Node dependencies
+├── docker-compose.yml          # Docker orchestration
+└── .env                        # Environment variables
+```
 
 ---
 
@@ -70,8 +117,8 @@ Ensure the following are installed:
 **Backend**:
 ```bash
 cd backend
-uv sync # or pip install -r requirements.txt
-uv run --env-file ../.env python main.py
+uv sync
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 **Frontend**:
