@@ -1,7 +1,7 @@
 import asyncio
 import logging
-from backend.schemas import Document
-from backend.indexing import index_documents
+from app.models.schemas import Document
+from app.services.rag.indexing import index_documents
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ async def upload_document(document: Document) -> bool:
     try:
         await asyncio.sleep(1)
         # Indexing documents. Keeping it modular for debugging purposes
-        _ = index_documents(document)        
+        _ = index_documents(document)
         log.info(f"Completed to upload Document {document.document_name} ")
         return True
 

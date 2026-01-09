@@ -217,3 +217,7 @@ backend/.venv
 backend/__pycache__
 backend/chroma_db
 backend/doc_store
+backend/data
+
+.DS_Store
+.vscode

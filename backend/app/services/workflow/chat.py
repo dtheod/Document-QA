@@ -2,8 +2,8 @@ import time
 import logging
 import asyncio
 
-from schemas import ChatResponseModel, SourceReference
-from .workflow import process_workflow_query
+from app.models.schemas import ChatResponseModel, SourceReference
+from app.services.workflow.graph import process_workflow_query
 
 log = logging.getLogger(__name__)
 
@@ -28,10 +28,9 @@ async def process_query(query: str, chat_history: list | None) -> ChatResponseMo
     start_time = time.time()
 
     try:
-
         # Run the synchronous workflow in a separate thread to avoid blocking the event loop
         result = await asyncio.to_thread(process_workflow_query, query, chat_history)
-        
+
         message_content = result.get("response", "No response generated.")
         retrieved_docs = result.get("retriever_results", [])
         judge_result = result.get("judge_result", True)
@@ -43,8 +42,8 @@ async def process_query(query: str, chat_history: list | None) -> ChatResponseMo
                 document_id=doc.metadata.get("id", "unknown"),
                 document_name=doc.metadata.get("source", "unknown"),
                 # Use the relevance score attached by the retriever agent, simpler logic if missing
-                relevance_score=doc.metadata.get("relevance_score", 0.0), 
-                content_excerpt=doc.page_content[:5000] # Limit content length
+                relevance_score=doc.metadata.get("relevance_score", 0.0),
+                content_excerpt=doc.page_content[:5000],  # Limit content length
             )
             sources.append(source)
 
@@ -55,10 +54,10 @@ async def process_query(query: str, chat_history: list | None) -> ChatResponseMo
         )
 
         return ChatResponseModel(
-            response=message_content, 
-            sources=sources, 
-            judge_result=judge_result, 
-            judge_feedback=judge_feedback
+            response=message_content,
+            sources=sources,
+            judge_result=judge_result,
+            judge_feedback=judge_feedback,
         )
     except Exception as e:
         log.exception(f"Error processing query: {e}")

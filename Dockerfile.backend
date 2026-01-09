@@ -13,8 +13,6 @@ RUN uv sync --frozen --no-cache-dir
 
 # Copy code
 COPY backend ./backend
-COPY backend/main.py .
-
 # Create temp dir for uploads
 RUN mkdir -p temp_docs
 
@@ -22,4 +20,4 @@ RUN mkdir -p temp_docs
 EXPOSE 8000
 
 # Run application
-CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "uvicorn", "app.main:app", "--app-dir", "backend", "--host", "0.0.0.0", "--port", "8000"]
