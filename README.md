@@ -17,7 +17,7 @@ This project provides a robust Document Chatbot utilizing a **FastAPI** backend 
 
 The system uses a sophisticated agent workflow:
 
-![Agent Workflow](backend/data/outputs/workflow_graph.png)
+![Agent Workflow](backend/outputs/workflow_graph.png)
 
 1.  **Router**: Classifies query (General vs. RAG vs. Summarization).
 2.  **Retriever**: Fetches relevant chunks from ChromaDB.
