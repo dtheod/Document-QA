@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir uv
 COPY backend/pyproject.toml backend/uv.lock ./
 
 # Install dependencies
-RUN uv sync --frozen --no-cache-dir
+RUN uv sync --frozen --no-dev --no-cache-dir
 
 # Copy code
 COPY backend ./backend
@@ -19,5 +19,5 @@ RUN mkdir -p temp_docs
 # Expose port
 EXPOSE 8000
 
-# Run application
-CMD ["uv", "run", "uvicorn", "app.main:app", "--app-dir", "backend", "--host", "0.0.0.0", "--port", "8000"]
+# Run application (--no-sync: use the image's environment as built, without dev dependencies)
+CMD ["uv", "run", "--no-sync", "uvicorn", "app.main:app", "--app-dir", "backend", "--host", "0.0.0.0", "--port", "8000"]

@@ -34,12 +34,20 @@
 
     ## INTENT DEFINITIONS (query_type)
     - "rag": The user asks a factual question that requires retrieval from documents.
+    - "summarize": The user asks for a summary or overview of a company or its documents.
     - "unknown": The intent isn't clear.
+
+    ## COMPANY
+    These are the companies that have indexed documents:
+    {companies}
+    Set company to the entry from this list that the query refers to, copied exactly as written.
+    If the query refers to none of them, or to several, set company to "general".
 
     ## USER QUERY
     "{query}"
   input_variables:
     - query
+    - companies
   metadata:
     version: 1
     owner: "rag-team"
@@ -91,7 +99,8 @@
 
     Rules:
     - Use ONLY the information in the context.
-    - Always include citations like after each sentence that uses that document.
+    - Each context excerpt starts with its citation label in square brackets, e.g. [report.pdf, p. 4].
+    - After each sentence, cite the excerpt it relies on by copying that label exactly.
     - If the context is irrelevant or empty, say you don't know and explain why.
 
     Context:
@@ -99,9 +108,6 @@
 
     User question:
     {query}
-
-    Citations:
-    {citations}
 
   input_variables:
     - context

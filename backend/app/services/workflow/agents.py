@@ -1,12 +1,20 @@
-import os
 from langchain_core.language_models import BaseChatModel
+from app.core.config import settings
 from app.services.rag.indexing import get_retriever
 from huggingface_hub import InferenceClient
-from app.utils import load_prompt_from_yaml, get_company_docs
+from app.utils import (
+    load_prompt_from_yaml,
+    get_company_docs,
+    get_indexed_companies,
+    citation_label,
+)
 from app.models.schemas import State, ClassificationOutput, JudgeOutput
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Number of child chunks the retriever fetches per query
+RETRIEVER_K = 5
 
 
 class WorkflowAgents:
@@ -23,7 +31,7 @@ class WorkflowAgents:
         try:
             client = InferenceClient(
                 provider="hf-inference",
-                api_key=os.getenv("HF_TOKEN"),
+                api_key=settings.hf_token,
             )
 
             result = client.text_classification(
@@ -36,8 +44,21 @@ class WorkflowAgents:
 
             query_type = max(dicts, key=dicts.get)
         except Exception as e:
+            # Fail closed: an unchecked query is not a safe query
             logger.error(f"Failed to load Huggingface model: {e}")
-            query_type = "SAFE"
+            query_type = "UNAVAILABLE"
+
+        if query_type == "INJECTION":
+            state["response"] = (
+                "Your question was blocked because it looks like a prompt "
+                "injection attempt. Please rephrase it."
+            )
+        elif query_type == "UNAVAILABLE":
+            state["response"] = (
+                "Your question could not be safety-checked because the prompt "
+                "injection check is unavailable, so it was not processed. "
+                "Please try again later."
+            )
 
         state["query_safety_type"] = query_type
         logger.info(f"--- Injection Agent --- Safety Type: {query_type}")
@@ -88,10 +109,16 @@ class WorkflowAgents:
 
         structured_llm = self.llm.with_structured_output(ClassificationOutput)
 
-        chain = classification_prompt | structured_llm
-        response = chain.invoke({"query": query})
+        _, vector_store = get_retriever()
+        companies = get_indexed_companies(vector_store)
 
-        company = response.company
+        chain = classification_prompt | structured_llm
+        response = chain.invoke(
+            {"query": query, "companies": "\n".join(f"- {c}" for c in companies)}
+        )
+
+        # Anything that is not an indexed company would make the filter match nothing
+        company = response.company if response.company in companies else "general"
         query_type = response.query_type
 
         state["company"] = company
@@ -111,7 +138,7 @@ class WorkflowAgents:
 
         retriever, _ = get_retriever()
 
-        search_kwargs = {"k": 5}
+        search_kwargs = {"k": RETRIEVER_K}
         if company not in ["unknown", "general"]:
             search_kwargs["filter"] = {"company": company}
 
@@ -243,15 +270,15 @@ class WorkflowAgents:
         )
 
         # Prepare context from retrieved docs
-        context_text = "\n\n".join([doc.page_content for doc in retriever_results])
-        citations = "\n".join(
-            [f"[{doc.metadata.get('id')}]" for doc in retriever_results]
+        context_text = "\n\n".join(
+            [
+                f"{citation_label(doc.metadata)}\n{doc.page_content}"
+                for doc in retriever_results
+            ]
         )
 
         chain = rag_prompt | self.llm
-        response = chain.invoke(
-            {"query": query, "context": context_text, "citations": citations}
-        )
+        response = chain.invoke({"query": query, "context": context_text})
 
         state["response"] = response.content
         return state

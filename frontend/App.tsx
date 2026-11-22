@@ -132,8 +132,9 @@ const App: React.FC = () => {
         role: 'assistant',
         content: response.answer || "I'm sorry, I couldn't generate an answer.",
         timestamp: new Date(),
-        judgeResult: response.judge_result,
-        judgeFeedback: response.judge_feedback
+        judgeResult: response.judge_result ?? undefined,
+        judgeFeedback: response.judge_feedback ?? undefined,
+        sources: response.sources
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {
@@ -291,6 +292,18 @@ const App: React.FC = () => {
                           <div className="text-sm whitespace-pre-wrap leading-relaxed">
                             {message.content}
                           </div>
+                          {message.sources && message.sources.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-slate-100">
+                              <div className="text-xs font-semibold text-slate-500 mb-1">Sources</div>
+                              <ul className="space-y-1">
+                                {message.sources.map((source, i) => (
+                                  <li key={i} className="text-xs text-slate-500" title={source.content_excerpt}>
+                                    {source.document_name}{source.page ? `, p. ${source.page}` : ''}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                           {message.judgeResult !== undefined && (
                             <div className={`mt-3 pt-3 border-t ${message.role === 'user' ? 'border-blue-400/30' : 'border-slate-100'}`}>
                               <div className="flex items-center gap-2 mb-1">

@@ -18,6 +18,15 @@ export interface Message {
   timestamp: Date;
   judgeResult?: boolean;
   judgeFeedback?: string;
+  sources?: Source[];
+}
+
+export interface Source {
+  document_id: string;
+  document_name: string;
+  page: number | null;
+  relevance_score: number | null;
+  content_excerpt: string;
 }
 
 export interface EvaluationResult {

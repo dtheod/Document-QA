@@ -4,6 +4,7 @@ import asyncio
 
 from app.models.schemas import ChatResponseModel, SourceReference
 from app.services.workflow.graph import process_workflow_query
+from app.utils import page_number
 
 log = logging.getLogger(__name__)
 
@@ -33,17 +34,18 @@ async def process_query(query: str, chat_history: list | None) -> ChatResponseMo
 
         message_content = result.get("response", "No response generated.")
         retrieved_docs = result.get("retriever_results", [])
-        judge_result = result.get("judge_result", True)
-        judge_feedback = result.get("judge_feedback", "Not evaluated.")
+        judge_result = result.get("judge_result")
+        judge_feedback = result.get("judge_feedback")
 
         sources = []
         for doc in retrieved_docs:
             source = SourceReference(
                 document_id=doc.metadata.get("id", "unknown"),
                 document_name=doc.metadata.get("source", "unknown"),
-                # Use the relevance score attached by the retriever agent, simpler logic if missing
-                relevance_score=doc.metadata.get("relevance_score", 0.0),
-                content_excerpt=doc.page_content[:5000],  # Limit content length
+                page=page_number(doc.metadata),
+                # Relevance score attached by the retriever agent (absent for summaries)
+                relevance_score=doc.metadata.get("relevance_score"),
+                content_excerpt=doc.page_content[:500],  # Limit content length
             )
             sources.append(source)
 

@@ -112,6 +112,16 @@ Ensure the following are installed:
     - **Frontend**: [http://localhost:5173](http://localhost:5173)
     - **Backend API**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
+5.  **Trace requests (optional)**
+    Start the MLflow server on the host, before or after `docker-compose up`:
+    ```bash
+    backend/scripts/mlflow-server.sh
+    ```
+    Every chat request is then traced to the `document-qa-app` experiment at
+    [http://localhost:5001](http://localhost:5001), next to the evaluation runs. If the server is not
+    running when the backend starts, the backend logs a warning and runs without tracing;
+    restart the backend once the server is up.
+
 ### 💻 Local Development
 
 **Backend**:
@@ -120,6 +130,7 @@ cd backend
 uv sync
 uv run uvicorn app.main:app --reload --port 8000
 ```
+To trace requests, start `scripts/mlflow-server.sh` and set `MLFLOW_TRACKING_URI=http://localhost:5001` in `.env`.
 
 **Frontend**:
 ```bash

@@ -20,10 +20,8 @@ def route_query(state: State):
     if query_type in ["summarize"]:
         return "summarisation_agent"
     elif query_type in ["rag"]:
-        if company in ["general"]:
-            return "general_agent"
-        else:
-            return "retriever_agent"
+        # No recognised company -> the retriever searches across all documents
+        return "retriever_agent"
     else:
         return "general_agent"
 
@@ -44,7 +42,7 @@ def injection_router(state: State):
     query_safety_type = state.get("query_safety_type", "general")
     logger.info(f"--- Injection Router --- Safety Type: {query_safety_type}")
 
-    if query_safety_type in ["INJECTION"]:
+    if query_safety_type not in ["SAFE"]:
         return END
     else:
         return "contextualizer"
@@ -62,7 +60,9 @@ class GraphBuilder:
         workflow = StateGraph(State)
 
         # Add nodes using bound methods
-        workflow.add_node("injection_agent", self.agents.injection_agent)
+        # Injection check is disabled for now. To re-enable: add the
+        # "injection_agent" node, make it the entry point and route it with
+        # injection_router to END or "contextualizer".
         workflow.add_node("contextualizer", self.agents.contextualize_agent)
         workflow.add_node("classifier", self.agents.classification_agent)
         workflow.add_node("judge_agent", self.agents.judge_agent)
@@ -72,13 +72,7 @@ class GraphBuilder:
         workflow.add_node("retriever_agent", self.agents.retriever_agent)
 
         # Set entry point
-        workflow.set_entry_point("injection_agent")
-
-        workflow.add_conditional_edges(
-            "injection_agent",
-            injection_router,
-            {END: END, "contextualizer": "contextualizer"},
-        )
+        workflow.set_entry_point("contextualizer")
 
         workflow.add_edge("contextualizer", "classifier")
 

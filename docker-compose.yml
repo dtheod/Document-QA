@@ -9,6 +9,11 @@ services:
       - ./backend:/app/backend
     env_file:
       - .env
+    environment:
+      # MLflow server on the host (backend/scripts/mlflow-server.sh) that receives the traces
+      - MLFLOW_TRACKING_URI=http://host.docker.internal:5001
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Docker Desktop has it built in; Linux needs this
     # Restart policy
     restart: always
 

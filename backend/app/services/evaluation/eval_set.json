@@ -1,0 +1,212 @@
+[
+  {
+    "id": "apple-01",
+    "category": "table_number",
+    "question": "What was Apple's net income for the first nine months ended June 28, 2025?",
+    "ground_truth": "Apple reported net income of $84,544 million for the first nine months ended June 28, 2025.",
+    "source": "apple.pdf p.1 (statements of operations)"
+  },
+  {
+    "id": "apple-02",
+    "category": "table_number",
+    "question": "What was Apple's net income for the first nine months ended on June 29, 2024?",
+    "ground_truth": "Apple's net income for the first nine months ended on June 29, 2024, totaled $79,000 million",
+    "source": "apple.pdf p.1 (statements of operations)"
+  },
+  {
+    "id": "vw-01",
+    "category": "fact_lookup",
+    "question": "Wie vielle Modelle umfasst das Hybridangebot der Cayenne-Reihe von Porsche?",
+    "ground_truth": "Das Hybridangebot der Cayenne-Reihe von Porsche umfasst insgesamt drei Modelle",
+    "source": "volkswagen.pdf Seite 4"
+  },
+  {
+    "id": "uber-01",
+    "category": "table_number",
+    "question": "What was the basic net loss per share attributable to Uber Technologies, Inc. in the first quarter of 2024?",
+    "ground_truth": "The basic net loss per share attributable to Uber Technologies, Inc. in the first quarter of 2024 was $0.31",
+    "source": "uber.pdf p.9 (statements of operations)"
+  },
+  {
+    "id": "apple-03",
+    "category": "summary",
+    "question": "Give a summary of the apple documents",
+    "ground_truth": "Apple's Form 10-Q for the quarter ended June 28, 2025 reports nine-month net sales of $313,695 million (up 6% from $296,105 million) and net income of $84,544 million (up from $79,000 million). iPhone net sales were $160,561 million (up 4%) and Services net sales were $80,408 million (up 13%). Total gross margin percentage was 46.8%. Greater China net sales fell 4% while all other segments grew. During the first nine months Apple repurchased 312 million shares for $69.3 billion, and its quarterly dividend was $0.26 per share.",
+    "source": "apple.pdf pp.1, 10, 14-16, 18"
+  },
+  {
+    "id": "uber-02",
+    "category": "table_number",
+    "question": "What is Ubers free Cash flow for 2024?",
+    "ground_truth": "The document only covers the first quarter of 2024. Uber's free cash flow for Q1 2024 was $1,359 million (about $1.4 billion); full-year 2024 free cash flow is not reported. Trailing-twelve-month free cash flow was $4.2 billion.",
+    "source": "uber.pdf p.1, p.14 (free cash flow reconciliation)"
+  },
+  {
+    "id": "uber-03",
+    "category": "table_number",
+    "question": "What is Ubers revenue for delivery in Q1 2023?",
+    "ground_truth": "The revenue for Uber's delivery segment in Q1 2023 was $3,093 million (or $3.093 billion)",
+    "source": "uber.pdf p.2 (revenue table)"
+  },
+  {
+    "id": "uber-04",
+    "category": "fact_lookup",
+    "question": "How many new markets in Video advertising did Uber enter?",
+    "ground_truth": "Uber expanded video Journey Ads to new markets including Australia, Brazil and Chile; the document names these three but does not give an exact count of new markets. The ad format is now available in 12 countries.",
+    "source": "uber.pdf p.4"
+  },
+  {
+    "id": "offtopic-01",
+    "category": "off_topic",
+    "question": "How is the weather today?",
+    "ground_truth": "I'm sorry, but I don't have enough information to answer that",
+    "source": null
+  },
+  {
+    "id": "noanswer-01",
+    "category": "no_answer",
+    "question": "What is the net income of Tesla for 2024?",
+    "ground_truth": "I don't know. The provided context does not include any information about Tesla's net income for 2024.",
+    "source": null
+  },
+  {
+    "id": "noanswer-02",
+    "category": "no_answer",
+    "question": "Give me a financial summary for BMW?",
+    "ground_truth": "No documents found for this company.",
+    "source": null
+  },
+  {
+    "id": "apple-04",
+    "category": "table_number",
+    "question": "What were Apple's Services net sales for the three months ended June 28, 2025?",
+    "ground_truth": "Apple's Services net sales for the three months ended June 28, 2025 were $27,423 million.",
+    "source": "apple.pdf p.1, p.15"
+  },
+  {
+    "id": "apple-06",
+    "category": "period_comparison",
+    "question": "How did Apple's Greater China net sales for the first nine months of fiscal 2025 compare with the same period in 2024?",
+    "ground_truth": "Greater China net sales were $49,884 million for the first nine months of 2025 versus $51,919 million in 2024, a 4% decrease, due to lower iPhone net sales partially offset by higher Mac net sales.",
+    "source": "apple.pdf p.14 (segment operating performance)"
+  },
+  {
+    "id": "apple-07",
+    "category": "period_comparison",
+    "question": "How did Apple's iPad net sales in the June 2025 quarter compare with the June 2024 quarter?",
+    "ground_truth": "iPad net sales were $6,581 million in the three months ended June 28, 2025 versus $7,162 million a year earlier, an 8% decrease, due to lower net sales of iPad Pro, partially offset by higher net sales of all other iPad models.",
+    "source": "apple.pdf p.15"
+  },
+  {
+    "id": "apple-08",
+    "category": "period_comparison",
+    "question": "What was Apple's total gross margin percentage for the first nine months of 2025, and how does it compare with 2024?",
+    "ground_truth": "Apple's total gross margin percentage was 46.8% for the first nine months of 2025, up from 46.2% in the same period of 2024.",
+    "source": "apple.pdf p.16 (gross margin table)"
+  },
+  {
+    "id": "apple-09",
+    "category": "fact_lookup",
+    "question": "How many shares did Apple repurchase during the first nine months of fiscal 2025, and for how much?",
+    "ground_truth": "During the nine months ended June 28, 2025, Apple repurchased 312 million shares of its common stock for $69.3 billion.",
+    "source": "apple.pdf p.10"
+  },
+  {
+    "id": "apple-10",
+    "category": "fact_lookup",
+    "question": "What was Apple's quarterly cash dividend per share as of June 28, 2025?",
+    "ground_truth": "As of June 28, 2025, Apple's quarterly cash dividend was $0.26 per share.",
+    "source": "apple.pdf p.18 (capital return program)"
+  },
+  {
+    "id": "apple-11",
+    "category": "fact_lookup",
+    "question": "How much did Apple release from escrow to Ireland in connection with the State Aid Decision?",
+    "ground_truth": "During the first nine months of 2025, Apple released €14.2 billion ($15.4 billion) from escrow to Ireland, which fully settled the State Aid Decision obligation.",
+    "source": "apple.pdf p.18"
+  },
+  {
+    "id": "noanswer-03",
+    "category": "no_answer",
+    "question": "How many iPhone units did Apple sell in the third quarter of fiscal 2025?",
+    "ground_truth": "I don't know. The document reports iPhone net sales ($44,582 million for the quarter) but does not disclose the number of iPhone units sold.",
+    "source": null
+  },
+  {
+    "id": "uber-05",
+    "category": "table_number",
+    "question": "What were Uber's total Gross Bookings in Q1 2024, and how were they split between Mobility, Delivery and Freight?",
+    "ground_truth": "Uber's Gross Bookings in Q1 2024 were $37,651 million: Mobility $18,670 million, Delivery $17,699 million and Freight $1,282 million.",
+    "source": "uber.pdf p.2 (gross bookings table)"
+  },
+  {
+    "id": "uber-06",
+    "category": "period_comparison",
+    "question": "How did Uber's Adjusted EBITDA in Q1 2024 compare with Q1 2023?",
+    "ground_truth": "Uber's Adjusted EBITDA was $1,382 million in Q1 2024 versus $761 million in Q1 2023, an increase of 82%.",
+    "source": "uber.pdf p.2, p.3"
+  },
+  {
+    "id": "uber-07",
+    "category": "fact_lookup",
+    "question": "What Gross Bookings outlook did Uber give for Q2 2024?",
+    "ground_truth": "Uber anticipated Q2 2024 Gross Bookings of $38.75 billion to $40.25 billion, representing 18% to 23% year-over-year growth on a constant currency basis.",
+    "source": "uber.pdf p.1"
+  },
+  {
+    "id": "uber-08",
+    "category": "table_number",
+    "question": "How large was Uber's unrealized loss on its Aurora investment in Q1 2024?",
+    "ground_truth": "Uber recorded a $505 million unrealized loss on its Aurora investment in the three months ended March 31, 2024.",
+    "source": "uber.pdf p.11 (other income (expense), net)"
+  },
+  {
+    "id": "noanswer-04",
+    "category": "no_answer",
+    "question": "How many employees did Uber have at the end of Q1 2024?",
+    "ground_truth": "I don't know. The document does not report Uber's employee headcount.",
+    "source": null
+  },
+  {
+    "id": "vw-02",
+    "category": "table_number",
+    "question": "Wie hoch war das Ergebnis nach Steuern des Volkswagen Konzerns in den ersten neun Monaten 2023?",
+    "ground_truth": "Das Ergebnis nach Steuern des Volkswagen Konzerns betrug in den ersten neun Monaten 2023 12.868 Mio. € (Vorjahr: 12.789 Mio. €, +0,6 %).",
+    "source": "volkswagen.pdf Seite 7 (Wesentliche Zahlen)"
+  },
+  {
+    "id": "vw-03",
+    "category": "period_comparison",
+    "question": "How did Volkswagen's battery-electric vehicle (BEV) deliveries in the first nine months of 2023 compare with the prior year?",
+    "ground_truth": "Volkswagen's BEV deliveries rose 45% year over year to 531,500 vehicles in the first nine months of 2023, raising the BEV share of total deliveries to 7.9%.",
+    "source": "volkswagen.pdf Seite 1, 3"
+  },
+  {
+    "id": "vw-04",
+    "category": "period_comparison",
+    "question": "How did Volkswagen Group's operating result for the first nine months of 2023 compare with 2022?",
+    "ground_truth": "Volkswagen Group's operating result fell to €16.2 billion (€16,241 million) in the first nine months of 2023, down about 7% from €17.4 billion (€17,439 million) before special items in 2022, mainly due to negative valuation effects of -€2.5 billion from commodity hedges. Adjusted for these effects it rose to €18.7 billion.",
+    "source": "volkswagen.pdf Seite 1, 2, 7"
+  },
+  {
+    "id": "vw-05",
+    "category": "fact_lookup",
+    "question": "What was the net liquidity of Volkswagen's Automotive Division at the end of September 2023?",
+    "ground_truth": "Net liquidity in Volkswagen's Automotive Division was €36.7 billion (€36,712 million) as of September 30, 2023.",
+    "source": "volkswagen.pdf Seite 1, 7"
+  },
+  {
+    "id": "noanswer-05",
+    "category": "no_answer",
+    "question": "What dividend per share will Volkswagen pay for fiscal year 2023?",
+    "ground_truth": "I don't know. The document does not mention a dividend for fiscal year 2023.",
+    "source": null
+  },
+  {
+    "id": "offtopic-02",
+    "category": "off_topic",
+    "question": "Who won the 2022 FIFA World Cup?",
+    "ground_truth": "I'm sorry, but I don't have enough information to answer that",
+    "source": null
+  }
+]
