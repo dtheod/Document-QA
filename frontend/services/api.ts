@@ -42,6 +42,10 @@ export const answerQuestion = async (query: string, history: Array<{ role: strin
   return data;
 };
 
+// The evaluation takes many minutes, so the backend runs it as a background job:
+// start it, then poll until it is done
+const EVALUATION_POLL_MS = 5000;
+
 export const runEvaluations = async (context?: string) => {
   const response = await fetch(`${API_URL}/evaluate`, {
     method: 'POST',
@@ -55,5 +59,18 @@ export const runEvaluations = async (context?: string) => {
     throw new Error('Failed to run evaluations');
   }
 
-  return response.json();
+  let job = await response.json();
+  while (job.status === 'running') {
+    await new Promise((resolve) => setTimeout(resolve, EVALUATION_POLL_MS));
+    const status = await fetch(`${API_URL}/evaluate`);
+    if (!status.ok) {
+      throw new Error('Failed to get evaluation status');
+    }
+    job = await status.json();
+  }
+
+  if (job.status !== 'done') {
+    throw new Error(job.error || 'Evaluation failed');
+  }
+  return job.results;
 };

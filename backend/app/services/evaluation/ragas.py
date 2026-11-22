@@ -83,8 +83,10 @@ async def run_ragas_evaluation():
     try:
         logger.info("Initializing RAGAS evaluation...")
 
-        # process_workflow_query is sync (app.invoke), so this runs on the event loop as before
-        rows = [answer_eval_item(item) for item in EVAL_SET]
+        # process_workflow_query is sync (app.invoke), so run it off the event loop
+        rows = await asyncio.to_thread(
+            lambda: [answer_eval_item(item) for item in EVAL_SET]
+        )
 
         # ragas.evaluate runs its own event loop, so it has to run in a separate thread
         loop = asyncio.get_running_loop()
@@ -98,11 +100,11 @@ async def run_ragas_evaluation():
                 {
                     "question": row["user_input"],
                     "response": row["response"],
-                    "faithfulness": row["faithfulness"],
-                    "answer_relevancy": row["answer_relevancy"],
-                    "answer_correctness": row["answer_correctness"],
-                    "context_precision": row["context_precision"],
-                    "context_recall": row["context_recall"],
+                    # RAGAS gives NaN when it cannot score an answer; NaN is not valid JSON
+                    **{
+                        name: None if pd.isna(row[name]) else row[name]
+                        for name in METRIC_NAMES
+                    },
                 }
             )
 
