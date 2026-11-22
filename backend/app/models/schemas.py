@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, TypedDict
+from typing import Literal, Optional, TypedDict
 
 
 class Document(BaseModel):
@@ -14,20 +14,24 @@ class Document(BaseModel):
 class SourceReference(BaseModel):
     document_id: str
     document_name: str
-    relevance_score: float
+    page: Optional[int] = None
+    relevance_score: Optional[float] = None
     content_excerpt: str
 
 
 class ChatResponseModel(BaseModel):
     response: str
     sources: list[SourceReference]
-    judge_result: bool
-    judge_feedback: str
+    judge_result: Optional[bool] = None
+    judge_feedback: Optional[str] = None
 
 
 class ClassificationOutput(BaseModel):
-    company: str = Field(..., description="The company the user is asking about.")
-    query_type: str = Field(
+    company: str = Field(
+        ...,
+        description="One of the indexed companies, or 'general' if none matches.",
+    )
+    query_type: Literal["rag", "summarize", "unknown"] = Field(
         ..., description="The intent of the user (rag, summarize, unknown)."
     )
 

@@ -30,6 +30,24 @@ def get_company_docs(vectorstore: Chroma, company: str) -> list[Document]:
 
     docs: list[Document] = []
     for text, meta in zip(raw["documents"], raw["metadatas"]):
-        docs.append(Document(page_content=text))
+        docs.append(Document(page_content=text, metadata=meta or {}))
 
     return docs
+
+
+def get_indexed_companies(vectorstore: Chroma) -> list[str]:
+    """Distinct company tags of everything in the vector store."""
+    raw = vectorstore._collection.get(include=["metadatas"])
+    return sorted({m["company"] for m in raw["metadatas"] if m and m.get("company")})
+
+
+def page_number(metadata: dict) -> int | None:
+    """1-based page number (PyPDF records a 0-based `page`)."""
+    page = metadata.get("page")
+    return page + 1 if isinstance(page, int) else None
+
+
+def citation_label(metadata: dict) -> str:
+    source = metadata.get("source", "unknown")
+    page = page_number(metadata)
+    return f"[{source}, p. {page}]" if page else f"[{source}]"

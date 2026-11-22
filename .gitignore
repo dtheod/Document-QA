@@ -221,3 +221,5 @@ backend/data
 
 .DS_Store
 .vscode
+##vite cache
+.vite/
