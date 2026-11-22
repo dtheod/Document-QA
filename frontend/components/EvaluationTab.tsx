@@ -100,7 +100,7 @@ const EvaluationTab: React.FC<EvaluationTabProps> = ({ evaluations, isLoading, o
                     { label: 'Context Precision', value: evalItem.context_precision, color: 'purple' },
                     { label: 'Context Recall', value: evalItem.context_recall, color: 'pink' }
                   ].map((metric) => (
-                    metric.value !== undefined && (
+                    metric.value != null && ( // null: RAGAS could not score it
                       <div key={metric.label} className={`bg-${metric.color}-50 border border-${metric.color}-100 rounded-xl p-3 text-center`}>
                         <div className={`text-2xl font-bold text-${metric.color}-600`}>
                           {(metric.value * 100).toFixed(0)}%

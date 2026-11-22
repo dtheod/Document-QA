@@ -34,11 +34,11 @@ export interface EvaluationResult {
   answer: string;
   score: number;
   reasoning: string;
-  faithfulness?: number;
-  answer_correctness?: number;
-  answer_relevancy?: number;
-  context_precision?: number;
-  context_recall?: number;
+  faithfulness?: number | null;
+  answer_correctness?: number | null;
+  answer_relevancy?: number | null;
+  context_precision?: number | null;
+  context_recall?: number | null;
   ground_truth?: string;
 }
 

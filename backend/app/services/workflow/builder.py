@@ -26,17 +26,6 @@ def route_query(state: State):
         return "general_agent"
 
 
-def retrieve_router(state: State):
-    """Route to appropriate agent based on category."""
-    query_type = state.get("query_type", "unknown")
-    logger.info(f"--- Retrieve Router --- Query Type: {query_type}")
-
-    if query_type in ["rag"]:
-        return "qa_agent"
-    else:
-        return "general_agent"
-
-
 def injection_router(state: State):
     """Route to appropriate agent based on query type."""
     query_safety_type = state.get("query_safety_type", "general")
@@ -86,11 +75,7 @@ class GraphBuilder:
             },
         )
 
-        workflow.add_conditional_edges(
-            "retriever_agent",
-            retrieve_router,
-            {"qa_agent": "qa_agent", "general_agent": "general_agent"},
-        )
+        workflow.add_edge("retriever_agent", "qa_agent")
 
         workflow.add_edge("qa_agent", "judge_agent")
         workflow.add_edge("summarisation_agent", "judge_agent")

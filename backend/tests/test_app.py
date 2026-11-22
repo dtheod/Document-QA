@@ -1,8 +1,12 @@
 """Offline tests: no API keys or network needed."""
 
+import asyncio
 import io
+import threading
 
+import pandas as pd
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
 from langchain_chroma import Chroma
 from langchain_classic.retrievers import ParentDocumentRetriever
@@ -396,3 +400,109 @@ def test_cors_allows_only_configured_origins(client):
 
     assert allowed_origin("http://localhost:5173") == "http://localhost:5173"
     assert allowed_origin("https://evil.example") is None
+
+
+# --- Long-running work must not block other requests ---
+
+
+@pytest_asyncio.fixture
+async def async_client():
+    import httpx
+
+    from app.main import app
+
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
+
+
+def slow_work(result=None):
+    """A stand-in for indexing or a workflow run that holds until the test releases it."""
+    started, release, finished = (threading.Event() for _ in range(3))
+
+    def work(*_args):
+        started.set()
+        release.wait(timeout=5)
+        finished.set()
+        return result
+
+    return work, started, release, finished
+
+
+@pytest.mark.asyncio
+async def test_upload_does_not_block_other_requests(
+    async_client, monkeypatch, tmp_path
+):
+    from app.api.routers import documents
+
+    index, started, release, finished = slow_work()
+    monkeypatch.setattr(documents, "UPLOAD_DIR", str(tmp_path))
+    monkeypatch.setattr(documents, "index_documents", index)
+
+    upload = asyncio.create_task(
+        async_client.post(
+            "/upload",
+            files={"files": ("a.pdf", io.BytesIO(b"%PDF"), "application/pdf")},
+        )
+    )
+    await asyncio.to_thread(started.wait, 5)
+
+    assert (await async_client.get("/health")).status_code == 200
+    assert not finished.is_set()  # /health answered while indexing was still running
+
+    release.set()
+    assert (await upload).status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_evaluation_runs_as_a_background_job(async_client, monkeypatch):
+    from app.api.routers import evaluation
+    from app.services.evaluation import ragas
+
+    item = {"question": "Q?", "ground_truth": "A."}
+    answer, started, release, finished = slow_work(
+        {**item, "answer": "A.", "contexts": ["ctx"]}
+    )
+    scored = []
+
+    def fake_score(rows):
+        scored.append(rows)
+        return pd.DataFrame(
+            [
+                {
+                    "user_input": "Q?",
+                    "response": "A.",
+                    **dict.fromkeys(ragas.METRIC_NAMES, 1.0),
+                    # RAGAS gives NaN when it cannot score an answer
+                    "answer_relevancy": float("nan"),
+                }
+            ]
+        )
+
+    monkeypatch.setattr(ragas, "EVAL_SET", [item])
+    monkeypatch.setattr(ragas, "answer_eval_item", answer)
+    monkeypatch.setattr(ragas, "score_with_ragas", fake_score)
+    monkeypatch.setattr(evaluation, "job", dict(evaluation.job))
+
+    response = await async_client.post("/evaluate", json={})
+    assert response.status_code == 202
+    assert response.json()["status"] == "running"
+    await asyncio.to_thread(started.wait, 5)
+
+    # While it runs, other requests are answered and a second start does not run it twice
+    assert (await async_client.get("/health")).status_code == 200
+    assert (await async_client.post("/evaluate", json={})).json()["status"] == "running"
+    assert not finished.is_set()
+
+    release.set()
+    for _ in range(100):
+        status = (await async_client.get("/evaluate")).json()
+        if status["status"] != "running":
+            break
+        await asyncio.sleep(0.05)
+
+    assert status["status"] == "done"
+    assert status["results"][0]["question"] == "Q?"
+    assert status["results"][0]["faithfulness"] == 1.0
+    assert status["results"][0]["answer_relevancy"] is None  # NaN is not valid JSON
+    assert len(scored) == 1

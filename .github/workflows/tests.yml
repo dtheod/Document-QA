@@ -6,7 +6,35 @@ on:
   pull_request:
 
 jobs:
+  docker:
+    name: Build Docker images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Build only, no push. Layers are cached in GitHub Actions, so the slow dependency
+      # install only reruns when uv.lock or package-lock.json changes
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.backend
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.frontend
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
   backend:
+    name: Backend tests
+    needs: docker  # run the tests only once both images build
     runs-on: ubuntu-latest
     defaults:
       run:

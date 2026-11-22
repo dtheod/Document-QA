@@ -1,5 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
+import asyncio
 import shutil
+import threading
 import os
 import logging
 from app.models.schemas import Document
@@ -11,6 +13,14 @@ router = APIRouter()
 
 UPLOAD_DIR = os.path.join(os.getcwd(), "temp_docs")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Indexing runs in worker threads; one at a time, so two uploads never write the index at once
+INDEX_LOCK = threading.Lock()
+
+
+def index_locked(doc: Document):
+    with INDEX_LOCK:
+        index_documents(doc)
 
 
 @router.post("/upload")
@@ -32,7 +42,8 @@ async def upload_documents(files: list[UploadFile] = File(...)):
 
             # Indexing
             doc = Document(document_path=file_path, document_name=filename)
-            index_documents(doc)
+            # Indexing is slow and synchronous, so keep it off the event loop
+            await asyncio.to_thread(index_locked, doc)
             logger.info(f"Indexing complete for {filename}")
 
             uploaded_files.append({"filename": filename, "status": "indexed"})
